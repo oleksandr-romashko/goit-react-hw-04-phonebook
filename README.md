@@ -1,4 +1,6 @@
-# goit-react-hw-04-phonebook
+# Contact Book
+
+## goit-react-hw-04-phonebook
 
 This is refactored application [goit-react-hw-03-phonebook](https://github.com/oleksandr-romashko/goit-react-hw-03-phonebook) using React hooks instead of classes.
 
