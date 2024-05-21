@@ -1,11 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import throttle from 'lodash.throttle';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import throttle from "lodash.throttle";
 
-import Input from 'components/Input/Input.styled';
-import Button from 'components/Button/Button.styled';
+import Input from "components/Input/Input.styled";
+import Button from "components/Button/Button.styled";
 
-import { Form, Label } from './ContactForm.styled';
+import { Form, Label } from "./ContactForm.styled";
 
 /**
  * Patterns to check input text for.
@@ -13,23 +13,18 @@ import { Form, Label } from './ContactForm.styled';
 const CONTACT_NAME_PATTERN_REGEX =
   "^[a-zA-Zа-яА-Я]+(([' \\-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$";
 const PHONE_NUMBER_PATTERN_REGEX =
-  '\\+?\\d{1,4}?[ .\\-\\s]?\\(?\\d{1,3}?\\)?[ .\\-\\s]?\\d{1,4}[ .\\-\\s]?\\d{1,4}[ .\\-\\s]?\\d{1,9}';
+  "\\+?\\d{1,4}?[ .\\-\\s]?\\(?\\d{1,3}?\\)?[ .\\-\\s]?\\d{1,4}[ .\\-\\s]?\\d{1,4}[ .\\-\\s]?\\d{1,9}";
 
 /**
  * Form to handle contact form elements.
- * Clears form elements if submit was successful.
- * @param {callback} props.onSubmit Callback to handle form submit.
+ * Submits data for adding a new contact.
+ * Clears form elements on successfull submit.
+ * @param {callback} props.onSubmit Callback to handle form submition.
  * @returns {React.Component} Form component.
  */
-class ContactForm extends React.Component {
-  #defaultState = {
-    name: '',
-    number: '',
-  };
-
-  state = {
-    ...this.#defaultState,
-  };
+const ContactForm = ({onSubmit}) => {
+  const [name, setName] = useState("");
+  const [number, setNumber] = useState("");
 
   /**
    * Handles form submition.
@@ -37,13 +32,11 @@ class ContactForm extends React.Component {
    * Calls provided props callback that handles add of a new contact.
    * @param {React.SyntheticEvent} event React crossbrowser SyntheticEvent that wraps the native Event.
    */
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
 
     // Additional pattern checks in JS
     // ! Evaluate logging data when if saving to a log file for potential debugging
-    const name = event.target.name.value;
-    const number = event.target.number.value;
     if (!name.match(CONTACT_NAME_PATTERN_REGEX)) {
       console.error(`Name '${name}' does not match allowed pattern.`);
       return;
@@ -53,15 +46,20 @@ class ContactForm extends React.Component {
       return;
     }
 
-    const isSubmitSuccessful = this.props.onSubmit(name, number);
+    const isSubmitSuccessful = onSubmit(name, number);
 
     if (isSubmitSuccessful) {
-      this.setState({
-        name: this.#defaultState.name,
-        number: this.#defaultState.number,
-      });
+      resetForm();
     }
   };
+
+  /**
+   * Resets form by clearing all elements data with default values.
+   */
+  const resetForm = () => {
+    setName("");
+    setNumber("");
+  }
 
   /**
    * Handles input change.
@@ -69,47 +67,51 @@ class ContactForm extends React.Component {
    * @param {string} event.target.name Name of the element.
    * @param {string} event.target.value Element value.
    */
-  handleInputTextChange = ({ target: { name, value } }) => {
-    this.setState({ [name]: value });
+  const handleInputTextChange = ({ target: { name, value } }) => {
+    if (name === "name") {
+      setName(value);
+    }
+    if (name === "number") {
+      setNumber(value);
+    }
   };
 
-  render() {
-    return (
-      <Form onSubmit={this.handleSubmit} aria-label="Add contact form">
-        <Label aria-label="Contact name">
-          Name
-          <Input
-            onChange={throttle(this.handleInputTextChange, 200, {
-              trailing: false,
-            })}
-            value={this.state.name}
-            type="text"
-            name="name"
-            pattern={CONTACT_NAME_PATTERN_REGEX}
-            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan."
-            required
-          />
-        </Label>
-        <Label aria-label="Contact phone number">
-          Phone number
-          <Input
-            onChange={throttle(this.handleInputTextChange, 200, {
-              trailing: false,
-            })}
-            value={this.state.number}
-            type="tel"
-            name="number"
-            pattern={PHONE_NUMBER_PATTERN_REGEX}
-            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-            required
-          />
-        </Label>
-        <Button type="submit" aria-label="Add contact">
-          Add contact
-        </Button>
-      </Form>
-    );
-  }
+  return (
+    <Form onSubmit={handleSubmit} aria-label="Add contact form">
+      <Label aria-label="Contact name">
+        Name
+        <Input
+          onChange={throttle(handleInputTextChange, 200, {
+            trailing: false,
+          })}
+          value={name}
+          type="text"
+          name="name"
+          pattern={CONTACT_NAME_PATTERN_REGEX}
+          title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan."
+          autoComplete='true'
+          required
+        />
+      </Label>
+      <Label aria-label="Contact phone number">
+        Phone number
+        <Input
+          onChange={throttle(handleInputTextChange, 200, {
+            trailing: false,
+          })}
+          value={number}
+          type="tel"
+          name="number"
+          pattern={PHONE_NUMBER_PATTERN_REGEX}
+          title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
+          required
+        />
+      </Label>
+      <Button type="submit" aria-label="Add contact">
+        Add contact
+      </Button>
+    </Form>
+  );
 }
 
 ContactForm.propTypes = {
