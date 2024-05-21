@@ -18,8 +18,8 @@ const Filter = ({ filterText, onFilterInputChange }) => {
    * @param {string} event.target.name Name of the element.
    * @param {string} event.target.value Element value.
    */
-  const handleInputChange = ({ target: { name, value } }) => {
-    onFilterInputChange({ name, value });
+  const handleInputChange = ({ target: { value } }) => {
+    onFilterInputChange(value);
   };
 
   return (
