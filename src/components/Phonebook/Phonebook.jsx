@@ -22,9 +22,7 @@ const Phonebook = () => {
    * Handle contacts update.
    */
   useEffect(()=>{
-    if(contacts) {
       storageApi.writeContactsToStorage(contacts);
-    }
   }, [contacts])
 
   /**
