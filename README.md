@@ -8,7 +8,7 @@ This is homework for the React components lifecycle and React hooks topics.
 
 ## Live page
 
-The live page for this repository can be viewed at [GitHub Pages](https://oleksandr-romashko.github.io/goit-react-hw-03-phonebook/).
+The live page for this repository can be viewed at [GitHub Pages](https://oleksandr-romashko.github.io/goit-react-hw-04-phonebook/).
 
 ## Local build and run
 
